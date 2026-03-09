@@ -51,7 +51,8 @@ jobs:
           ls -l src/main/resources/server.jks
 
       - name: Build package
-        run: mvn -B -DskipTests clean package
+        run: mvn -B clean package
+
 
       - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
