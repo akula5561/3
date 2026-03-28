@@ -41,6 +41,14 @@ public class UserAccountService {
         repo.save(user);
     }
 
+    public java.util.Optional<UserAccount> findById(Long id) {
+        return repo.findById(id);
+    }
+
+    public java.util.Optional<UserAccount> findByUsername(String username) {
+        return repo.findByUsername(username);
+    }
+
     //  пункт 6 задания: сложность пароля
     private void validatePassword(String password) {
         if (password.length() < 8) {
