@@ -5,7 +5,10 @@ import jakarta.persistence.*;
 @Entity
 @Table(
         name = "users",
-        uniqueConstraints = @UniqueConstraint(columnNames = "username")
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "username"),
+                @UniqueConstraint(columnNames = "email")
+        }
 )
 public class UserAccount {
 
@@ -13,23 +16,41 @@ public class UserAccount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // логин
     @Column(nullable = false, unique = true)
     private String username;
 
-    // хэш пароля (BCrypt)
+    /** Имя (методичка: name). */
     @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(name = "password_hash", nullable = false)
     private String password;
 
-    // простая роль: USER или ADMIN
     @Column(nullable = false)
     private String role = "USER";
+
+    @Column(name = "is_account_expired", nullable = false)
+    private boolean accountExpired = false;
+
+    @Column(name = "is_account_locked", nullable = false)
+    private boolean accountLocked = false;
+
+    @Column(name = "is_credentials_expired", nullable = false)
+    private boolean credentialsExpired = false;
+
+    @Column(name = "is_disabled", nullable = false)
+    private boolean disabled = false;
 
     public UserAccount() {
     }
 
-    public UserAccount(String username, String password, String role) {
+    public UserAccount(String username, String name, String email, String password, String role) {
         this.username = username;
+        this.name = name;
+        this.email = email;
         this.password = password;
         this.role = role;
     }
@@ -50,6 +71,22 @@ public class UserAccount {
         this.username = username;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -64,5 +101,37 @@ public class UserAccount {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public boolean isAccountExpired() {
+        return accountExpired;
+    }
+
+    public void setAccountExpired(boolean accountExpired) {
+        this.accountExpired = accountExpired;
+    }
+
+    public boolean isAccountLocked() {
+        return accountLocked;
+    }
+
+    public void setAccountLocked(boolean accountLocked) {
+        this.accountLocked = accountLocked;
+    }
+
+    public boolean isCredentialsExpired() {
+        return credentialsExpired;
+    }
+
+    public void setCredentialsExpired(boolean credentialsExpired) {
+        this.credentialsExpired = credentialsExpired;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 }

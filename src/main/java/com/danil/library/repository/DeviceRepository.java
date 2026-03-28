@@ -9,5 +9,12 @@ import java.util.UUID;
 public interface DeviceRepository extends JpaRepository<Device, UUID> {
 
     Optional<Device> findByMacAddress(String macAddress);
+
+    Optional<Device> findByMacAddressAndUser_Id(String macAddress, Long userId);
+
+    /** Как в методичке: {@code findByMac}. */
+    default Optional<Device> findByMac(String macAddress) {
+        return findByMacAddress(macAddress);
+    }
 }
 

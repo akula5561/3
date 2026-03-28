@@ -33,10 +33,25 @@ public class UserAccountService {
 
         validatePassword(password);
 
+        String name = req.getName();
+        if (name == null || name.isBlank()) {
+            name = username;
+        }
+
+        String email = req.getEmail();
+        if (email == null || email.isBlank()) {
+            email = username.toLowerCase().replaceAll("[^a-z0-9._-]", "_") + "@noreply.local";
+        }
+        if (repo.existsByEmail(email)) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+
         UserAccount user = new UserAccount();
         user.setUsername(username);
-        user.setPassword(encoder.encode(password)); //  BCrypt
-        user.setRole("USER");                      //  по умолчанию USER
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(encoder.encode(password));
+        user.setRole("USER");
 
         repo.save(user);
     }
@@ -49,7 +64,6 @@ public class UserAccountService {
         return repo.findByUsername(username);
     }
 
-    //  пункт 6 задания: сложность пароля
     private void validatePassword(String password) {
         if (password.length() < 8) {
             throw new IllegalArgumentException("Password must be at least 8 chars");
@@ -57,15 +71,28 @@ public class UserAccountService {
 
         boolean hasUpper = false, hasLower = false, hasDigit = false, hasSpecial = false;
         for (char c : password.toCharArray()) {
-            if (Character.isUpperCase(c)) hasUpper = true;
-            else if (Character.isLowerCase(c)) hasLower = true;
-            else if (Character.isDigit(c)) hasDigit = true;
-            else hasSpecial = true;
+            if (Character.isUpperCase(c)) {
+                hasUpper = true;
+            } else if (Character.isLowerCase(c)) {
+                hasLower = true;
+            } else if (Character.isDigit(c)) {
+                hasDigit = true;
+            } else {
+                hasSpecial = true;
+            }
         }
 
-        if (!hasUpper) throw new IllegalArgumentException("Password must contain uppercase letter");
-        if (!hasLower) throw new IllegalArgumentException("Password must contain lowercase letter");
-        if (!hasDigit) throw new IllegalArgumentException("Password must contain digit");
-        if (!hasSpecial) throw new IllegalArgumentException("Password must contain special char");
+        if (!hasUpper) {
+            throw new IllegalArgumentException("Password must contain uppercase letter");
+        }
+        if (!hasLower) {
+            throw new IllegalArgumentException("Password must contain lowercase letter");
+        }
+        if (!hasDigit) {
+            throw new IllegalArgumentException("Password must contain digit");
+        }
+        if (!hasSpecial) {
+            throw new IllegalArgumentException("Password must contain special char");
+        }
     }
 }

@@ -4,6 +4,10 @@ public class RegisterRequest {
 
     private String username;
     private String password;
+    /** Методичка: name; если пусто — подставляется username. */
+    private String name;
+    /** Уникальный email; если пусто — генерируется от username. */
+    private String email;
 
     public RegisterRequest() {
     }
@@ -22,5 +26,21 @@ public class RegisterRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

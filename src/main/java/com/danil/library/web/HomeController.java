@@ -8,6 +8,6 @@ public class HomeController {
 
     @GetMapping("/")
     public String index() {
-        return "Library API is running over HTTPS (student: 1БИБ23354)";
+        return "License management API is running over HTTPS";
     }
 }

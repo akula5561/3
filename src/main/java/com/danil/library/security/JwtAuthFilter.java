@@ -52,9 +52,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             String username = claims.getSubject();
             String role = claims.get("role", String.class);
+            Long uid = claims.get("uid", Long.class);
+            if (uid == null) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\":\"Access token has no uid\"}");
+                return;
+            }
 
+            var principal = new JwtPrincipal(uid, username, role);
             var auth = new UsernamePasswordAuthenticationToken(
-                    username,
+                    principal,
                     null,
                     List.of(new SimpleGrantedAuthority("ROLE_" + role))
             );

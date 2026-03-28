@@ -15,8 +15,9 @@ public class License {
     @Column(nullable = false, unique = true)
     private String code;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    /** Пользователь, активировавший лицензию; до первой активации — null (см. методичку). */
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = true)
     private UserAccount user;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -37,8 +38,10 @@ public class License {
     @Column(nullable = false)
     private Integer deviceCount;
 
-    @Column
-    private UUID ownerId;
+    /** Владелец лицензии (покупатель), задаётся при создании; методичка: owner_id → users. */
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private UserAccount owner;
 
     @Column
     private String description;
@@ -115,12 +118,12 @@ public class License {
         this.deviceCount = deviceCount;
     }
 
-    public UUID getOwnerId() {
-        return ownerId;
+    public UserAccount getOwner() {
+        return owner;
     }
 
-    public void setOwnerId(UUID ownerId) {
-        this.ownerId = ownerId;
+    public void setOwner(UserAccount owner) {
+        this.owner = owner;
     }
 
     public String getDescription() {

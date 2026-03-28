@@ -43,6 +43,10 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Bad credentials");
         }
 
+        if (user.isDisabled() || user.isAccountLocked() || user.isAccountExpired() || user.isCredentialsExpired()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Account inactive");
+        }
+
         Instant now = Instant.now();
 
         // 1) Сначала создаём сессию, чтобы получить sid

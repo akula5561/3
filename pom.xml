@@ -14,7 +14,7 @@
     <artifactId>laba2-rbpo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>laba2-rbpo</name>
-    <description>Library API with security</description>
+    <description>License management API with JWT, HTTPS, PostgreSQL</description>
 
     <properties>
         <java.version>17</java.version>
@@ -31,6 +31,16 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- Flyway: без spring-boot-starter-flyway (иногда не резолвится версия из BOM в IDE); ядро + драйвер PG — Boot всё равно автоконфигурирует миграции -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
         </dependency>
 
         <!-- Validation (jakarta.validation) -->

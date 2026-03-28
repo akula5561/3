@@ -3,7 +3,9 @@ package com.danil.library.security;
 import com.danil.library.model.UserAccount;
 import com.danil.library.repository.UserAccountRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.*;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,15 +24,17 @@ public class DbUserDetailsService implements UserDetailsService {
         UserAccount user = repo.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-        // В БД  role хранится как "USER" или "ADMIN"
-        // Spring Security ждёт "ROLE_USER" / "ROLE_ADMIN"
         String role = user.getRole();
         String springRole = role.startsWith("ROLE_") ? role : "ROLE_" + role;
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                List.of(new SimpleGrantedAuthority(springRole))
-        );
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .disabled(user.isDisabled())
+                .accountExpired(user.isAccountExpired())
+                .accountLocked(user.isAccountLocked())
+                .credentialsExpired(user.isCredentialsExpired())
+                .authorities(List.of(new SimpleGrantedAuthority(springRole)))
+                .build();
     }
 }

@@ -6,6 +6,7 @@ import java.util.UUID;
 public record LicenseDto(
         UUID id,
         String code,
+        /** null до первой активации (методичка). */
         Long userId,
         UUID productId,
         UUID typeId,
@@ -13,8 +14,8 @@ public record LicenseDto(
         LocalDate endingDate,
         boolean blocked,
         Integer deviceCount,
-        UUID ownerId,
+        /** Владелец лицензии (users.id), методичка: owner_id. */
+        Long ownerUserId,
         String description
 ) {
 }
-
