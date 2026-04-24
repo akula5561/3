@@ -48,6 +48,9 @@ build/
 *.key
 tls/
 
+# Test keystore for signature module integration test (non-production key).
+!src/test/resources/signing-test.jks
+
 # macOS
 .DS_Store
 **/.DS_Store
