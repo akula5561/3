@@ -33,6 +33,10 @@ jobs:
     env:
       KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      SIGNATURE_KEY_STORE_PATH: classpath:signing.jks
+      SIGNATURE_KEY_STORE_PASSWORD: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
+      SIGNATURE_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+      SIGNATURE_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -49,6 +53,13 @@ jobs:
           mkdir -p src/main/resources
           echo "${{ secrets.KEYSTORE_B64 }}" | base64 --decode > src/main/resources/server.jks
           ls -l src/main/resources/server.jks
+
+      - name: Restore signing.jks from GitHub Secrets
+        run: |
+          mkdir -p src/main/resources
+          test -n "${{ secrets.SIGNING_KEYSTORE_B64 }}" || (echo "SIGNING_KEYSTORE_B64 is empty"; exit 1)
+          echo "${{ secrets.SIGNING_KEYSTORE_B64 }}" | base64 --decode > src/main/resources/signing.jks
+          ls -l src/main/resources/signing.jks
 
       - name: Build package
         run: mvn -B clean package
