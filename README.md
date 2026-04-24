@@ -143,3 +143,45 @@ base64 < signing.jks | tr -d '\n'
 - Интеграционный тест sign+verify: `src/test/java/com/danil/library/SignatureModuleIntegrationTest.java`
 - Тестовый keystore-конфиг: `src/test/resources/application-test.properties`, `src/test/resources/signing-test.jks`
 - Проверка сборкой: `./mvnw -B test`
+
+## Лаба 4: API сигнатур (реализовано поверх лабы 3)
+
+Лаба 3 сохранена и используется повторно: модуль ЭЦП (`SigningService`, `KeyProvider`, canonicalization) не ломается, а переиспользуется для подписи malware-сигнатур.
+
+Ключевые файлы лабы 4:
+
+- Миграция БД:
+  - `src/main/resources/db/migration/V10__malware_signatures.sql`
+- Сущности:
+  - `src/main/java/com/danil/library/model/MalwareSignature.java`
+  - `src/main/java/com/danil/library/model/MalwareSignatureHistory.java`
+  - `src/main/java/com/danil/library/model/MalwareSignatureAudit.java`
+  - `src/main/java/com/danil/library/model/SignatureStatus.java`
+- Репозитории:
+  - `src/main/java/com/danil/library/repository/MalwareSignatureRepository.java`
+  - `src/main/java/com/danil/library/repository/MalwareSignatureHistoryRepository.java`
+  - `src/main/java/com/danil/library/repository/MalwareSignatureAuditRepository.java`
+- Сервис (бизнес-логика + подпись + history/audit):
+  - `src/main/java/com/danil/library/service/MalwareSignatureService.java`
+- REST API (8 операций + verify):
+  - `src/main/java/com/danil/library/controller/MalwareSignatureController.java`
+- DTO:
+  - `src/main/java/com/danil/library/dto/CreateMalwareSignatureRequest.java`
+  - `src/main/java/com/danil/library/dto/UpdateMalwareSignatureRequest.java`
+  - `src/main/java/com/danil/library/dto/SignatureIdsRequest.java`
+  - `src/main/java/com/danil/library/dto/MalwareSignatureResponse.java`
+  - `src/main/java/com/danil/library/dto/MalwareSignatureHistoryResponse.java`
+  - `src/main/java/com/danil/library/dto/MalwareSignatureAuditResponse.java`
+  - `src/main/java/com/danil/library/dto/SignatureIntegrityResponse.java`
+
+Операции API:
+
+- `GET /api/malware-signatures` — полная база (только ACTUAL)
+- `GET /api/malware-signatures/increment?since=...` — инкремент (ACTUAL + DELETED)
+- `POST /api/malware-signatures/by-ids` — выборка по UUID
+- `POST /api/malware-signatures` (ADMIN) — создание
+- `PUT /api/malware-signatures/{id}` (ADMIN) — обновление
+- `DELETE /api/malware-signatures/{id}` (ADMIN) — логическое удаление
+- `GET /api/malware-signatures/{id}/history` (ADMIN) — история версий
+- `GET /api/malware-signatures/{id}/audit` (ADMIN) — аудит
+- `GET /api/malware-signatures/{id}/verify` — проверка целостности подписи записи
